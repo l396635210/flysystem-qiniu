@@ -1,4 +1,6 @@
 ## QiNiu OSS(七牛云对象存储) Adapter For Flysystem.
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+
 Flysystem 适配器： [七牛云](https://www.qiniu.com/)
 
 ## Installation
@@ -11,8 +13,8 @@ require 'vendor/autoload.php';
 
 use League\Flysystem\Filesystem;
 use Liz\Flysystem\QiNiu\QiNiuOssAdapter;
-
-$cdnHost = 'http://default.cdn.host/'; # cdn [外链默认域名须英文](https://developer.qiniu.com/kodo/kb/5158/how-to-transition-from-test-domain-name-to-a-custom-domain-name)
+# cdn [外链默认域名须英文](https://developer.qiniu.com/kodo/kb/5158/how-to-transition-from-test-domain-name-to-a-custom-domain-name)
+$cdnHost = 'http://default.cdn.host/';
 $bucket = 'bucket'; 
 $accessKey = 'access-key';
 $secretKey = 'secret-key';
