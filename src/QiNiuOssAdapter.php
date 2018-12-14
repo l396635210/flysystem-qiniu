@@ -36,7 +36,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      * @param string $accessKey
      * @param string $secretKey
      */
-    public function __construct($cdnHost, $bucket, $accessKey, $secretKey)
+    public function __construct($accessKey, $secretKey, $bucket, $cdnHost)
     {
         $this->host = strripos($cdnHost, '/') + 1 === strlen($cdnHost) ? $cdnHost : $cdnHost.'/';
         $this->bucket = $bucket;
