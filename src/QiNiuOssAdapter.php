@@ -15,6 +15,15 @@ class QiNiuOssAdapter extends AbstractAdapter
     private $client;
     private $auth;
     private $bucket;
+
+    /**
+     * @return string
+     */
+    protected function getBucket(): string
+    {
+        return $this->bucket;
+    }
+
     private $host;
     private $bucketManager;
     private $uploadManager;
@@ -38,7 +47,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     /**
      * @return BucketManager
      */
-    private function getBucketManager()
+    protected function getBucketManager()
     {
         if (!$this->bucketManager) {
             $this->bucketManager = new BucketManager($this->auth);
@@ -49,7 +58,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     /**
      * @return UploadManager
      */
-    private function getUploadManager()
+    protected function getUploadManager()
     {
         if (!$this->uploadManager) {
             $this->uploadManager = new UploadManager();
@@ -60,7 +69,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     /**
      * @param null|Error $error
      */
-    private function createExceptionIfError($error = null)
+    protected function createExceptionIfError($error = null)
     {
         if ($error instanceof Error) {
             $e = new QiNiuOssAdapterException($error->message(), $error->code());
@@ -73,7 +82,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      *
      * @throws QiNiuOssAdapterException
      */
-    private function ossResponse(array &$response)
+    protected function ossResponse(array &$response)
     {
         if ($response[1] instanceof Error) {
             $error = $response['1'];
@@ -87,7 +96,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      *
      * @return string
      */
-    private function urlEncode($path)
+    protected function urlEncode($path)
     {
         return strtr($path, [
             ' ' => '%20',
@@ -344,7 +353,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     public function listContents($directory = '', $recursive = false)
     {
         $directory = $recursive ? '' : $directory;
-        $response = $this->getBucketManager()->listFiles($this->bucket);
+        $response = $this->getBucketManager()->listFiles($this->getBucket(), $directory);
         $this->ossResponse($response);
         $getDir = function ($path, $currentDir) {
             $tmp = strtr($path, [
