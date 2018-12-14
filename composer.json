@@ -1,5 +1,5 @@
 {
-    "name": "l396635210/flysystem-qiniu",
+    "name": "liz/flysystem-qiniu",
     "description": "QiNiu oss adapter for flysystem",
     "type": "library",
     "require": {
