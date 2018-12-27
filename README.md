@@ -46,6 +46,11 @@ $result = $flysystem->copy('bucket/path/file.txt', 'bucket/path/file_copy.txt');
 
 // list the contents
 $result = $flysystem->listContents('path', false);
+
+// 转码
+$flysystem->addPlugin(new \Liz\Flysystem\QiNiu\Plugins\TransCoder());
+$rules = 'm3u8/segtime/10/ab/128k/ar/44100/acodec/libfaac/r/30/vb/640k/vcodec/libx264/stripmeta/0/noDomain/1';
+$flysystem->transCoding('test.mp4', $rules,'pipeline', 'notify_url', 'save_as', 'bucket');
 ```
 
 ## Notice

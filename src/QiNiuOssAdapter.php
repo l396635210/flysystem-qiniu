@@ -7,6 +7,7 @@ use League\Flysystem\Config;
 use Qiniu\Auth;
 use Qiniu\Http\Client;
 use Qiniu\Http\Error;
+use Qiniu\Processing\PersistentFop;
 use Qiniu\Storage\BucketManager;
 use Qiniu\Storage\UploadManager;
 
@@ -15,6 +16,11 @@ class QiNiuOssAdapter extends AbstractAdapter
     private $client;
     private $auth;
     private $bucket;
+    private $host;
+
+    private $bucketManager;
+    private $uploadManager;
+    private $fopManager;
 
     /**
      * @return string
@@ -23,10 +29,6 @@ class QiNiuOssAdapter extends AbstractAdapter
     {
         return $this->bucket;
     }
-
-    private $host;
-    private $bucketManager;
-    private $uploadManager;
 
     /**
      * QiNiuOssAdapter constructor.
@@ -64,6 +66,13 @@ class QiNiuOssAdapter extends AbstractAdapter
             $this->uploadManager = new UploadManager();
         }
         return $this->uploadManager;
+    }
+
+    protected function getFopManager(){
+        if (!$this->fopManager){
+            $this->fopManager = new PersistentFop($this->auth);
+        }
+        return $this->fopManager;
     }
 
     /**
@@ -441,4 +450,26 @@ class QiNiuOssAdapter extends AbstractAdapter
     {
         // TODO: Implement getVisibility() method. 七牛云没有此功能
     }
+
+    public function transCoding($path, $rules, $pipeline=null, $notifyUrl=null, $saveAs=null, $bucket=null){
+        $bucket = $bucket ?: $this->getBucket();
+        $dir = "";
+        $filename = $path;
+        $position = strripos($path, '/');
+        if ($position !== false){
+            $dir = substr($path, 0, $position+1);
+            $filename = substr(strrchr($path, "/"), 1);
+        }
+        if (!$saveAs){
+            list($name, $ext) = explode( '.', $filename);
+            $saveAs = $dir.$name.'_trans.'.$ext;
+        }
+        $fops = "avthumb/$rules|saveas/" . \Qiniu\base64_urlSafeEncode($bucket . ":$saveAs");
+
+        $response = $this->getFopManager()->execute($bucket, $path, $fops, $pipeline, $notifyUrl);
+        $this->ossResponse($response);
+
+        return $response;
+    }
+
 }
