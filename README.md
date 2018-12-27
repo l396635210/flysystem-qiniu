@@ -48,9 +48,14 @@ $result = $flysystem->copy('bucket/path/file.txt', 'bucket/path/file_copy.txt');
 $result = $flysystem->listContents('path', false);
 
 // 转码
-$flysystem->addPlugin(new \Liz\Flysystem\QiNiu\Plugins\TransCoder());
+/**
+ * @var $flysystem Filesystem|TransCoder
+ */
+$flysystem = new Filesystem(new QiNiuOssAdapter($accessKey, $secretKey, $bucket, $cdnHost));
+
+$flysystem->addPlugin(new TransCoder('notify_url', 'pipeline', 'toBucket', 'wmImage')); //设置转码默认选项
 $rules = 'm3u8/segtime/10/ab/128k/ar/44100/acodec/libfaac/r/30/vb/640k/vcodec/libx264/stripmeta/0/noDomain/1';
-$flysystem->transCoding('test.mp4', $rules,'pipeline', 'notify_url', 'save_as', 'bucket');
+$flysystem->transCoding('test.mp4', $rules,'save_as', 'notify_url', 'pipeline', 'toBucket');
 ```
 
 ## Notice

@@ -227,10 +227,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function updateStream($path, $resource, Config $config)
     {
-        $uploadToken = $this->auth->uploadToken($this->bucket, $path);
-        $response = $this->getUploadManager()->put($uploadToken, $path, stream_get_contents($resource));
-        $this->ossResponse($response);
-        $fileInfo = $this->mapFileInfo($path);
+        $fileInfo = $this->update($path, stream_get_contents($resource), $config);
         return $fileInfo;
     }
 
@@ -451,8 +448,17 @@ class QiNiuOssAdapter extends AbstractAdapter
         // TODO: Implement getVisibility() method. 七牛云没有此功能
     }
 
-    public function transCoding($path, $rules, $pipeline=null, $notifyUrl=null, $saveAs=null, $bucket=null){
-        $bucket = $bucket ?: $this->getBucket();
+    /**
+     * @param $path
+     * @param $rules
+     * @param null $pipeline
+     * @param null $notifyUrl
+     * @param null $saveAs
+     * @param null $bucket
+     * @return array
+     * @throws QiNiuOssAdapterException
+     */
+    public function transCoding($path, $rules, $pipeline=null, $notifyUrl=null, $saveAs=null, $toBucket=null){
         $dir = "";
         $filename = $path;
         $position = strripos($path, '/');
@@ -464,9 +470,9 @@ class QiNiuOssAdapter extends AbstractAdapter
             list($name, $ext) = explode( '.', $filename);
             $saveAs = $dir.$name.'_trans.'.$ext;
         }
-        $fops = "avthumb/$rules|saveas/" . \Qiniu\base64_urlSafeEncode($bucket . ":$saveAs");
+        $fops = "avthumb/$rules|saveas/" . \Qiniu\base64_urlSafeEncode($toBucket . ":$saveAs");
 
-        $response = $this->getFopManager()->execute($bucket, $path, $fops, $pipeline, $notifyUrl);
+        $response = $this->getFopManager()->execute($this->bucket, $path, $fops, $pipeline, $notifyUrl);
         $this->ossResponse($response);
 
         return $response;
