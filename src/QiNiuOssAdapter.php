@@ -68,8 +68,9 @@ class QiNiuOssAdapter extends AbstractAdapter
         return $this->uploadManager;
     }
 
-    protected function getFopManager(){
-        if (!$this->fopManager){
+    protected function getFopManager()
+    {
+        if (!$this->fopManager) {
             $this->fopManager = new PersistentFop($this->auth);
         }
         return $this->fopManager;
@@ -455,27 +456,29 @@ class QiNiuOssAdapter extends AbstractAdapter
      * @param null $notifyUrl
      * @param null $saveAs
      * @param null $bucket
+     *
      * @return array
+     *
      * @throws QiNiuOssAdapterException
      */
-    public function transCoding($path, $rules, $pipeline=null, $notifyUrl=null, $saveAs=null, $toBucket=null){
-        $dir = "";
+    public function transCoding($path, $rules, $pipeline = null, $notifyUrl = null, $saveAs = null, $toBucket = null)
+    {
+        $dir = '';
         $filename = $path;
         $position = strripos($path, '/');
-        if ($position !== false){
-            $dir = substr($path, 0, $position+1);
-            $filename = substr(strrchr($path, "/"), 1);
+        if (false !== $position) {
+            $dir = substr($path, 0, $position + 1);
+            $filename = substr(strrchr($path, '/'), 1);
         }
-        if (!$saveAs){
-            list($name, $ext) = explode( '.', $filename);
+        if (!$saveAs) {
+            list($name, $ext) = explode('.', $filename);
             $saveAs = $dir.$name.'_trans.'.$ext;
         }
-        $fops = "avthumb/$rules|saveas/" . \Qiniu\base64_urlSafeEncode($toBucket . ":$saveAs");
+        $fops = "avthumb/$rules|saveas/".\Qiniu\base64_urlSafeEncode($toBucket.":$saveAs");
 
         $response = $this->getFopManager()->execute($this->bucket, $path, $fops, $pipeline, $notifyUrl);
         $this->ossResponse($response);
 
         return $response;
     }
-
 }
