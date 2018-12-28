@@ -474,6 +474,7 @@ class QiNiuOssAdapter extends AbstractAdapter
             list($name, $ext) = explode('.', $filename);
             $saveAs = $dir.$name.'_trans.'.$ext;
         }
+        $toBucket = $toBucket ?: $this->bucket;
         $fops = "avthumb/$rules|saveas/".\Qiniu\base64_urlSafeEncode($toBucket.":$saveAs");
 
         $response = $this->getFopManager()->execute($this->bucket, $path, $fops, $pipeline, $notifyUrl);
