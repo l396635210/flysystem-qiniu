@@ -396,8 +396,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function getMetadata($path)
     {
-        $metaData = $this->mapFileInfo($path, true);
-        return $metaData;
+        return $this->mapFileInfo($path, true);
     }
 
     /**
@@ -421,8 +420,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function getMimetype($path)
     {
-        $metaData = $this->getMetadata($path);
-        return $metaData;
+        return $this->getMetadata($path);
     }
 
     /**

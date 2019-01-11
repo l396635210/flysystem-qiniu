@@ -19,6 +19,8 @@ $bucket = 'bucket';
 $accessKey = 'access-key';
 $secretKey = 'secret-key';
 
+$flysystem = new Filesystem(new QiNiuOssAdapter($accessKey, $secretKey, $bucket, $cdnHost));
+
 // write file
 $result = $flysystem->write('bucket/path/file.txt', 'contents');
 
