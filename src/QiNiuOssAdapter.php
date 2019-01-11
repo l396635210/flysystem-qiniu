@@ -162,8 +162,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     protected function mapDirInfo($dirname)
     {
-        $normalized = ['path' => $dirname, 'type' => 'dir'];
-        return $normalized;
+        return ['path' => $dirname, 'type' => 'dir'];
     }
 
     /**
@@ -181,8 +180,7 @@ class QiNiuOssAdapter extends AbstractAdapter
         $response = $this->getUploadManager()->put($uploadToken, $path, $contents);
         $this->ossResponse($response);
 
-        $fileInfo = $this->mapFileInfo($path, true, ['contents' => $contents]);
-        return $fileInfo;
+        return $this->mapFileInfo($path, true, ['contents' => $contents]);
     }
 
     /**
@@ -213,8 +211,7 @@ class QiNiuOssAdapter extends AbstractAdapter
         $uploadToken = $this->auth->uploadToken($this->bucket, $path);
         $response = $this->getUploadManager()->put($uploadToken, $path, $contents);
         $this->ossResponse($response);
-        $fileInfo = $this->mapFileInfo($path);
-        return $fileInfo;
+        return $this->mapFileInfo($path);
     }
 
     /**
@@ -228,8 +225,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function updateStream($path, $resource, Config $config)
     {
-        $fileInfo = $this->update($path, stream_get_contents($resource), $config);
-        return $fileInfo;
+        return $this->update($path, stream_get_contents($resource), $config);
     }
 
     /**
@@ -290,8 +286,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     public function createDir($dirname, Config $config)
     {
         $this->write($dirname.'/.init', 'hello world', $config);
-        $dirInfo = $this->mapDirInfo($dirname);
-        return $dirInfo;
+        return $this->mapDirInfo($dirname);
     }
 
     /**
@@ -345,8 +340,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     {
         $path = $this->urlEncode($path);
         $stream = fopen($this->host.$path, 'rb');
-        $result = $this->mapFileInfo($path, false, ['stream' => $stream]);
-        return $result;
+        return $this->mapFileInfo($path, false, ['stream' => $stream]);
     }
 
     /**
@@ -366,8 +360,7 @@ class QiNiuOssAdapter extends AbstractAdapter
             $tmp = strtr($path, [
                 $currentDir.'/' => '',
             ]);
-            $dir = substr($tmp, 0, stripos($tmp, '/'));
-            return $dir;
+            return substr($tmp, 0, stripos($tmp, '/'));
         };
         $files = $response['items'] ?: [];
         $results = [];
@@ -432,8 +425,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function getTimestamp($path)
     {
-        $metaData = $this->getMetadata($path);
-        return $metaData['timestamp'];
+        return $this->getMetadata($path);
     }
 
     /**
