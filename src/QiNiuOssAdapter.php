@@ -409,8 +409,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function getSize($path)
     {
-        $metaData = $this->getMetadata($path);
-        return $metaData['size'];
+        return $this->getMetadata($path);
     }
 
     /**
