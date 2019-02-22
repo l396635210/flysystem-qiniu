@@ -21,6 +21,11 @@ $secretKey = 'secret-key';
 
 $flysystem = new Filesystem(new QiNiuOssAdapter($accessKey, $secretKey, $bucket, $cdnHost));
 
+// 创建文件夹
+$flysystem->createDir('bucket/path/dir');
+
+// 删除文件夹
+$flysystem->deleteDir('bucket/path/dir');
 // write file
 $result = $flysystem->write('bucket/path/file.txt', 'contents');
 
