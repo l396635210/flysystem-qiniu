@@ -15,7 +15,7 @@ use function Qiniu\base64_urlSafeEncode;
 /**
  * Class TransCoder.
  *
- * @method int transCoding($path, $rules, $saveAs=null, $notifyUrl=null, $pipeline=null, $bucket=null)
+ * @method array transCoding(需要进行转码的文件全路径 $path, 转码规则 $rules, 另存文件全路径 $saveAs=null, 通知地址 $notifyUrl=null, 队列名称 $pipeline=null, 保存bucket $bucket=null)
  */
 class TransCoder extends AbstractPlugin
 {
@@ -27,6 +27,14 @@ class TransCoder extends AbstractPlugin
 
     protected $wmImage;
 
+    /**
+     * TransCoder constructor.
+     *
+     * @param null $notifyUrl 处理完毕默认通知地址
+     * @param null $pipeLine  默认队列名称 https://portal.qiniu.com/dora/mps/new
+     * @param null $toBucket  处理完成默认保存到的bucket
+     * @param null $wmImage   水印图片地址
+     */
     public function __construct($notifyUrl = null, $pipeLine = null, $toBucket = null, $wmImage = null)
     {
         $this->notifyUrl = $notifyUrl;

@@ -5,6 +5,7 @@ namespace Liz\Flysystem\QiNiu;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Config;
 use Qiniu\Auth;
+use function Qiniu\base64_urlSafeEncode;
 use Qiniu\Http\Client;
 use Qiniu\Http\Error;
 use Qiniu\Processing\PersistentFop;
@@ -40,7 +41,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function __construct($accessKey, $secretKey, $bucket, $cdnHost)
     {
-        $this->host = strripos($cdnHost, '/') + 1 === strlen($cdnHost) ? $cdnHost : $cdnHost.'/';
+        $this->makeHost($cdnHost);
         $this->bucket = $bucket;
         $this->auth = new Auth($accessKey, $secretKey);
         $this->client = new Client();
@@ -77,7 +78,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     }
 
     /**
-     * @param null|Error $error
+     * @param Error|null $error
      */
     protected function createExceptionIfError($error = null)
     {
@@ -297,7 +298,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      */
     public function setVisibility($path, $visibility)
     {
-        // TODO: Implement setVisibility() method.  七牛云没有此功能
+        // TODO: Implement setVisibility() method.  七牛云没有此功能，只能对整个bucket设置私有或公共
     }
 
     /**
@@ -439,12 +440,12 @@ class QiNiuOssAdapter extends AbstractAdapter
     }
 
     /**
-     * @param $path
-     * @param $rules
-     * @param null $pipeline
-     * @param null $notifyUrl
-     * @param null $saveAs
-     * @param null $bucket
+     * @param $path 待转码文件路径
+     * @param $rules 转码规则[转码规则说明](https://developer.qiniu.com/kodo/kb/5858/the-instructions-on-the-storage-space-of-transcoding-style)
+     * @param null $pipeline  队列名称,若不填写使用TransCoder初始化的pipeline https://portal.qiniu.com/dora/mps/new
+     * @param null $notifyUrl 处理完毕通知地址,若不填写使用TransCoder初始化的bucket
+     * @param null $saveAs    保存全部路径，若不填写则为$path的名称加_trans
+     * @param null $bucket    处理完成保存到bucket，若不填写则使用TransCoder初始化的bucket
      *
      * @return array
      *
@@ -464,11 +465,44 @@ class QiNiuOssAdapter extends AbstractAdapter
             $saveAs = $dir.$name.'_trans.'.$ext;
         }
         $toBucket = $toBucket ?: $this->bucket;
-        $fops = "avthumb/$rules|saveas/".\Qiniu\base64_urlSafeEncode($toBucket.":$saveAs");
+        $fops = "avthumb/$rules|saveas/".base64_urlSafeEncode($toBucket.":$saveAs");
 
         $response = $this->getFopManager()->execute($this->bucket, $path, $fops, $pipeline, $notifyUrl);
         $this->ossResponse($response);
 
         return $response;
+    }
+
+    /**
+     * @param string $baseUrl         请求url
+     * @param bool   $isBucketPrivate bucket是否为私有，如果是私有m3u8文件会对相关ts文件进行授权处理(https://developer.qiniu.com/dora/api/1292/private-m3u8-pm3u8)
+     * @param int    $expires
+     *
+     * @return string
+     */
+    public function privateDownloadUrl($baseUrl, $isBucketPrivate = false, $expires = 3600)
+    {
+        if (0 !== strpos($baseUrl, 'http')) {
+            $baseUrl = $this->host.$baseUrl;
+        }
+
+        if ($isBucketPrivate && strstr($baseUrl, 'm3u8')) {
+            if (strstr($baseUrl, '?')) {
+                $baseUrl .= '&pm3u8/0';
+            } else {
+                $baseUrl .= '?pm3u8/0';
+            }
+        }
+
+        return $this->auth->privateDownloadUrl($baseUrl, $expires);
+    }
+
+    private function makeHost($cdnHost)
+    {
+        $host = strripos($cdnHost, '/') + 1 === strlen($cdnHost) ? $cdnHost : $cdnHost.'/';
+        $this->host = strtolower($host);
+        if (0 !== strpos($this->host, 'http')) {
+            $this->host = 'http://'.$this->host;
+        }
     }
 }

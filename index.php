@@ -1,13 +1,4 @@
-## QiNiu OSS(七牛云对象存储) Adapter For Flysystem.
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-
-Flysystem 适配器： [七牛云](https://www.qiniu.com/)
-
-## Installation
-composer require liz/flysystem-qiniu
-
-## Usage
-```php
+<?php
 
 require 'vendor/autoload.php';
 
@@ -118,8 +109,3 @@ var_dump($result);
     echo "<pre>";
     var_dump($exception);
 }
-```
-
-## Notice
-由于七牛云没有文件夹的概念，建议顶级目录同bucket名
-`getVisibility()`,`setVisibility()`七牛云没有提供相关操作
