@@ -121,5 +121,4 @@ var_dump($result);
 ```
 
 ## Notice
-由于七牛云没有文件夹的概念，建议顶级目录同bucket名
-`getVisibility()`,`setVisibility()`七牛云没有提供相关操作
+`getVisibility()`,`setVisibility()`七牛云没有提供相关操作，只能对整个bucket进行私有或公共访问的操作
