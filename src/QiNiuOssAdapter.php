@@ -42,128 +42,9 @@ class QiNiuOssAdapter extends AbstractAdapter
     public function __construct($accessKey, $secretKey, $bucket, $cdnHost)
     {
         $this->makeHost($cdnHost);
-        $this->bucket = $bucket;
         $this->auth = new Auth($accessKey, $secretKey);
+        $this->bucket = $bucket;
         $this->client = new Client();
-    }
-
-    /**
-     * @return BucketManager
-     */
-    protected function getBucketManager()
-    {
-        if (!$this->bucketManager) {
-            $this->bucketManager = new BucketManager($this->auth);
-        }
-        return $this->bucketManager;
-    }
-
-    /**
-     * @return UploadManager
-     */
-    protected function getUploadManager()
-    {
-        if (!$this->uploadManager) {
-            $this->uploadManager = new UploadManager();
-        }
-        return $this->uploadManager;
-    }
-
-    protected function getFopManager()
-    {
-        if (!$this->fopManager) {
-            $this->fopManager = new PersistentFop($this->auth);
-        }
-        return $this->fopManager;
-    }
-
-    /**
-     * @param Error|null $error
-     */
-    protected function createExceptionIfError($error = null)
-    {
-        if ($error instanceof Error) {
-            $e = new QiNiuOssAdapterException($error->message(), $error->code());
-            throw $e->setResponse($error->getResponse());
-        }
-    }
-
-    /**
-     * @param array $response
-     *
-     * @throws QiNiuOssAdapterException
-     */
-    protected function ossResponse(array &$response)
-    {
-        if ($response[1] instanceof Error) {
-            $error = $response['1'];
-            $this->createExceptionIfError($error);
-        }
-        $response = $response[0];
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    protected function urlEncode($path)
-    {
-        return strtr($path, [
-            ' ' => '%20',
-        ]);
-    }
-
-    /**
-     * @param string $path
-     * @param array  $normalized
-     *
-     * @return array
-     *
-     * @throws QiNiuOssAdapterException
-     */
-    protected function getFileMeta($path, array $normalized)
-    {
-        $response = $this->getBucketManager()->stat($this->bucket, $path);
-        $this->ossResponse($response);
-
-        $normalized['mimetype'] = $response['mimeType'];
-        $normalized['timestamp'] = (int) ceil($response['putTime'] / 1000 / 10000);
-        $normalized['size'] = $response['fsize'];
-        return $normalized;
-    }
-
-    /**
-     * @param string $path
-     * @param bool   $requireMeta
-     * @param array  $options
-     *
-     * @return array|mixed
-     *
-     * @throws QiNiuOssAdapterException
-     */
-    protected function mapFileInfo($path, $requireMeta = false, $options = [])
-    {
-        $normalized = [
-            'type' => 'file',
-            'path' => $path,
-        ];
-
-        if ($requireMeta) {
-            $normalized = $this->getFileMeta($path, $normalized);
-        }
-        $normalized = array_merge($normalized, $options);
-        return $normalized;
-    }
-
-    /**
-     * @param string $dirname
-     *
-     * @return array
-     */
-    protected function mapDirInfo($dirname)
-    {
-        return ['path' => $dirname, 'type' => 'dir'];
     }
 
     /**
@@ -495,6 +376,125 @@ class QiNiuOssAdapter extends AbstractAdapter
         }
 
         return $this->auth->privateDownloadUrl($baseUrl, $expires);
+    }
+
+    /**
+     * @return BucketManager
+     */
+    protected function getBucketManager()
+    {
+        if (!$this->bucketManager) {
+            $this->bucketManager = new BucketManager($this->auth);
+        }
+        return $this->bucketManager;
+    }
+
+    /**
+     * @return UploadManager
+     */
+    protected function getUploadManager()
+    {
+        if (!$this->uploadManager) {
+            $this->uploadManager = new UploadManager();
+        }
+        return $this->uploadManager;
+    }
+
+    protected function getFopManager()
+    {
+        if (!$this->fopManager) {
+            $this->fopManager = new PersistentFop($this->auth);
+        }
+        return $this->fopManager;
+    }
+
+    /**
+     * @param Error|null $error
+     */
+    protected function createExceptionIfError($error = null)
+    {
+        if ($error instanceof Error) {
+            $e = new QiNiuOssAdapterException($error->message(), $error->code());
+            throw $e->setResponse($error->getResponse());
+        }
+    }
+
+    /**
+     * @param array $response
+     *
+     * @throws QiNiuOssAdapterException
+     */
+    protected function ossResponse(array &$response)
+    {
+        if ($response[1] instanceof Error) {
+            $error = $response['1'];
+            $this->createExceptionIfError($error);
+        }
+        $response = $response[0];
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string
+     */
+    protected function urlEncode($path)
+    {
+        return strtr($path, [
+            ' ' => '%20',
+        ]);
+    }
+
+    /**
+     * @param string $path
+     * @param array  $normalized
+     *
+     * @return array
+     *
+     * @throws QiNiuOssAdapterException
+     */
+    protected function getFileMeta($path, array $normalized)
+    {
+        $response = $this->getBucketManager()->stat($this->bucket, $path);
+        $this->ossResponse($response);
+
+        $normalized['mimetype'] = $response['mimeType'];
+        $normalized['timestamp'] = (int) ceil($response['putTime'] / 1000 / 10000);
+        $normalized['size'] = $response['fsize'];
+        return $normalized;
+    }
+
+    /**
+     * @param string $path
+     * @param bool   $requireMeta
+     * @param array  $options
+     *
+     * @return array|mixed
+     *
+     * @throws QiNiuOssAdapterException
+     */
+    protected function mapFileInfo($path, $requireMeta = false, $options = [])
+    {
+        $normalized = [
+            'type' => 'file',
+            'path' => $path,
+        ];
+
+        if ($requireMeta) {
+            $normalized = $this->getFileMeta($path, $normalized);
+        }
+        $normalized = array_merge($normalized, $options);
+        return $normalized;
+    }
+
+    /**
+     * @param string $dirname
+     *
+     * @return array
+     */
+    protected function mapDirInfo($dirname)
+    {
+        return ['path' => $dirname, 'type' => 'dir'];
     }
 
     private function makeHost($cdnHost)
