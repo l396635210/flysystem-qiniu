@@ -378,6 +378,18 @@ class QiNiuOssAdapter extends AbstractAdapter
         return $this->auth->privateDownloadUrl($baseUrl, $expires);
     }
 
+    public function makeBucket($bucket, $region = 'z0'){
+        $response = $this->getBucketManager()->createBucket($bucket, $region);
+        $this->ossResponse($response);
+        return $response;
+    }
+
+    public function fetchBucket($bucket){
+        $response = $this->getBucketManager()->bucketInfo($bucket);
+        $this->ossResponse($response);
+        return $response;
+    }
+
     /**
      * @return BucketManager
      */
