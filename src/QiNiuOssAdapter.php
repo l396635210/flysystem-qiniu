@@ -221,7 +221,11 @@ class QiNiuOssAdapter extends AbstractAdapter
     public function readStream($path)
     {
         $path = $this->urlEncode($path);
-        $stream = fopen($this->host.$path, 'rb');
+        $url = $path;
+        if (!stripos($path, 'token')){
+            $url = $this->privateDownloadUrl($this->host.$path);
+        }
+        $stream = fopen($url, 'rb');
         return $this->mapFileInfo($path, false, ['stream' => $stream]);
     }
 
