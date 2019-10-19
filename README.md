@@ -30,34 +30,38 @@ $flysystem = new Filesystem(new QiNiuOssAdapter($accessKey, $secretKey, $bucket,
 try {
 
 // 创建文件夹
-    $flysystem->createDir('path/dir');
-
+    $result = $flysystem->createDir('path/dir');
+var_dump($result);
 // 删除文件夹
-    $flysystem->deleteDir('path/dir');
-
+    $result = $flysystem->deleteDir('path/dir');
+var_dump($result);
 // has file
     $isExist = $flysystem->has('path/file.txt');
-
 // write file
     if (!$isExist){
         $result = $flysystem->write('path/file.txt', 'contents');
+        var_dump($result);
     }
 
 // write stream
     if (!$flysystem->has('path/filename.txt')){
         $stream = fopen('.gitignore', 'r+');
-        $result = $flysystem->writeStream('path/filename.txt', $stream);
+        $result = $flysystem->writeStream('path/file name.txt', $stream);
+        var_dump($result);
+        $result = $flysystem->read('path/file name.txt');
+        var_dump($result);
     }
 
 // update file
     $result = $flysystem->update('path/file.txt', 'new contents');
-
+var_dump($result);
 // read file
     $result = $flysystem->read('path/file.txt');
-
+var_dump($result);
 // rename files
     if(!$flysystem->has('path/newname.txt')){
-        $result = $flysystem->rename('path/filename.txt', 'path/newname.txt');
+        $result = $flysystem->rename('path/file name.txt', 'path/newname.txt');
+        var_dump($result);
     }
 
 // copy files
@@ -67,10 +71,10 @@ try {
 
 // list the contents
     $result = $flysystem->listContents('path', false);
-var_dump($result);
+    var_dump($result);
 // delete file
     $result = $flysystem->delete('path/file.txt');
-
+var_dump($result);
 // 转码
     /**
      * @var $flysystem Filesystem|QiNiuOssAdapter
@@ -103,9 +107,9 @@ var_dump($result);
      */
     $result = $flysystem->transCoding('xxw-community/a.mp4', $rules,  'xxw-community/a.m3u8', 'notify_url', 'first', 'to_bucket');
     var_dump($result);
+
 //获取私有下载地址
     $flysystem->addPlugin(new PrivateDownloadUrlMaker());
-
     /**
      * @param string $baseUrl 请求url
      * @param bool $isBucketPrivate bucket是否为私有，如果是私有m3u8文件会对相关ts文件进行授权处理(https://developer.qiniu.com/dora/api/1292/private-m3u8-pm3u8)
@@ -114,6 +118,12 @@ var_dump($result);
      */
     $url = $flysystem->privateDownloadUrl('xxw-community/a.m3u8', true);
     var_dump($url);
+
+//获取上传token
+    $flysystem->addPlugin(new UploadTokenMaker());
+    $token = $flysystem->getUploadToken('upload/token/file.txt');
+    var_dump($token);
+
 }catch (Exception $exception){
     echo "<pre>";
     var_dump($exception);

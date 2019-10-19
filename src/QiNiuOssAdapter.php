@@ -48,6 +48,20 @@ class QiNiuOssAdapter extends AbstractAdapter
     }
 
     /**
+     * @param $pathname 保存路径 path/to/filename.ext
+     * @param int $expires token时限
+     * @param array $policy 上传策略，关联数组 https://developer.qiniu.com/kodo/manual/1206/put-policy
+     * @return string
+     */
+    public function getUploadToken($pathname, $expires = 3600, array $policy = []){
+        if (!$policy){
+            $policy = null;
+        }
+        $uploadToken = $this->auth->uploadToken($this->bucket, $pathname, $expires, $policy, false);
+        return $uploadToken;
+    }
+
+    /**
      * @param string $path
      * @param string $contents
      * @param Config $config
@@ -205,8 +219,9 @@ class QiNiuOssAdapter extends AbstractAdapter
         $response = $this->getBucketManager()->stat($this->bucket, $path);
         $this->ossResponse($response);
         $path = $this->urlEncode($path);
+        $privateUrl = $this->privateDownloadUrl($path);
         $result = $this->mapFileInfo($path, false, [
-            'contents' => file_get_contents($this->host.$path),
+            'contents' => file_get_contents($privateUrl),
         ]);
         return $result;
     }
@@ -332,7 +347,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      * @param null $saveAs    保存全部路径，若不填写则为$path的名称加_trans
      * @param null $bucket    处理完成保存到bucket，若不填写则使用TransCoder初始化的bucket
      *
-     * @return array
+     * @return array|string
      *
      * @throws QiNiuOssAdapterException
      */
@@ -500,6 +515,7 @@ class QiNiuOssAdapter extends AbstractAdapter
             $normalized = $this->getFileMeta($path, $normalized);
         }
         $normalized = array_merge($normalized, $options);
+        $normalized['path'] = $this->privateDownloadUrl($path);
         return $normalized;
     }
 
