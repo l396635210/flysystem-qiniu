@@ -9,6 +9,14 @@ use Liz\Flysystem\QiNiu\Plugins\TransCoderHelpers\AbstractTransCoderPolicy;
 abstract class AbstractUploadPolicy
 {
 
+    const CallbackBodyTypeForm = 'application/x-www-form-urlencoded';
+    const CallbackBodyTypeJson = 'application/json';
+
+    protected static $callbackBodyTypes = [
+        'qiniu.upload_policy.callback_body_type.form' => self::CallbackBodyTypeForm,
+        'qiniu.upload_policy.callback_body_type.json' => self::CallbackBodyTypeJson,
+    ];
+
     abstract public function addCallbackUrl(string $callbackUrl);
 
     abstract public function getCallbackUrls();
@@ -27,5 +35,13 @@ abstract class AbstractUploadPolicy
      * @return AbstractTransCoderPolicy
      */
     abstract public function getTransCoderPolicy();
+
+    /**
+     * @return array
+     */
+    public static function getCallbackBodyTypes(): array
+    {
+        return self::$callbackBodyTypes;
+    }
 
 }
