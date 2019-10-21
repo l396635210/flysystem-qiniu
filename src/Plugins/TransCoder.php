@@ -9,6 +9,7 @@
 namespace Liz\Flysystem\QiNiu\Plugins;
 
 use League\Flysystem\Plugin\AbstractPlugin;
+use Liz\Flysystem\QiNiu\Plugins\TransCoderHelpers\AbstractTransCoderPolicy;
 use Liz\Flysystem\QiNiu\QiNiuOssAdapter;
 use function Qiniu\base64_urlSafeEncode;
 
@@ -26,6 +27,10 @@ class TransCoder extends AbstractPlugin
     protected $toBucket;
 
     protected $wmImage;
+    /**
+     * @var null
+     */
+    private $rules;
 
     /**
      * TransCoder constructor.
@@ -35,12 +40,21 @@ class TransCoder extends AbstractPlugin
      * @param null $toBucket  处理完成默认保存到的bucket
      * @param null $wmImage   水印图片地址
      */
-    public function __construct($notifyUrl = null, $pipeLine = null, $toBucket = null, $wmImage = null)
+    public function __construct($notifyUrl = null, $pipeLine = null, $toBucket = null, $wmImage = null, $rules = null)
     {
         $this->notifyUrl = $notifyUrl;
         $this->pipeLine = $pipeLine;
         $this->toBucket = $toBucket;
         $this->wmImage = $wmImage;
+        $this->rules = $rules;
+    }
+
+    public function setPolicy(AbstractTransCoderPolicy $transCoderPolicy){
+        $this->notifyUrl = $transCoderPolicy->getNotifyUrl();
+        $this->pipeLine = $transCoderPolicy->getPipeLine();
+        $this->toBucket = $transCoderPolicy->getToBucket();
+        $this->wmImage = $transCoderPolicy->getWmImage();
+        $this->rules = $transCoderPolicy->getRules();
     }
 
     public function getMethod()
@@ -73,7 +87,8 @@ class TransCoder extends AbstractPlugin
         $notifyUrl = $notifyUrl ?: $this->notifyUrl;
         $pipeline = $pipeline ?: $this->pipeLine;
         $toBucket = $toBucket ?: $this->toBucket;
-        if ($this->wmImage) {
+        $rules = $rules ?: $this->rules;
+        if ($this->wmImage && !strstr($rules, 'wmImage')) {
             $rules .= '/wmImage/'.base64_urlSafeEncode($this->wmImage);
         }
         return $this->getFlySystemAdapter()->transCoding($path, $rules, $pipeline, $notifyUrl, $saveAs, $toBucket);
