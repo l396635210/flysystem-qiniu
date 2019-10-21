@@ -8,47 +8,53 @@ abstract class AbstractTransCoderPolicy
 {
 
     /**
-     * @return mixed
+     * @return string
      */
     abstract public function getNotifyUrl();
 
     /**
-     * @param mixed $notifyUrl
+     * @param string $notifyUrl
      */
-    abstract public function setNotifyUrl($notifyUrl);
+    abstract public function setNotifyUrl(string $notifyUrl);
 
     /**
-     * @return mixed
+     * @return string
      */
     abstract public function getPipeLine();
 
     /**
-     * @param mixed $pipeLine
+     * @param string $pipeLine
      */
-    abstract public function setPipeLine($pipeLine);
+    abstract public function setPipeLine(string $pipeLine);
 
     /**
-     * @return mixed
+     * @return string
      */
     abstract public function getToBucket();
 
     /**
-     * @param mixed $toBucket
+     * @param string $toBucket
      */
-    abstract public function setToBucket($toBucket);
+    abstract public function setToBucket(string $toBucket);
 
     /**
-     * @return mixed
+     * @return string
      */
     abstract public function getWmImage();
 
     /**
      * @param mixed $wmImage
      */
-    abstract public function setWmImage($wmImage);
+    abstract public function setWmImage(string $wmImage);
 
-    abstract public function setRules($rules);
+    /**
+     * @param string $rules
+     */
+    abstract public function setRules(string $rules);
 
+    /**
+     * @return string
+     */
     abstract public function getRules();
 
 }

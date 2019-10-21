@@ -9,15 +9,15 @@ use Liz\Flysystem\QiNiu\Plugins\TransCoderHelpers\AbstractTransCoderPolicy;
 abstract class AbstractUploadPolicy
 {
 
-    abstract public function addCallbackUrl($callbackUrl);
+    abstract public function addCallbackUrl(string $callbackUrl);
 
     abstract public function getCallbackUrls();
 
-    abstract public function setCallbackBody($callbackBody);
+    abstract public function setCallbackBody(string $callbackBody);
 
     abstract public function getCallbackBody();
 
-    abstract public function setCallbackBodyType($bodyType);
+    abstract public function setCallbackBodyType(string $bodyType);
 
     abstract public function getCallbackBodyType();
 
