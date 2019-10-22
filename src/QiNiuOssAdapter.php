@@ -47,6 +47,14 @@ class QiNiuOssAdapter extends AbstractAdapter
         $this->client = new Client();
     }
 
+    public function getAuth(){
+        return $this->auth;
+    }
+
+    public function verifyUploadCallback($contentType, $authorization, $url, $callbackBody){
+        return $this->auth->verifyCallback($contentType, $authorization, $url, $callbackBody);
+    }
+
     /**
      * @param $pathname 保存路径 path/to/filename.ext
      * @param int $expires token时限
