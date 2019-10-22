@@ -515,7 +515,7 @@ class QiNiuOssAdapter extends AbstractAdapter
             $normalized = $this->getFileMeta($path, $normalized);
         }
         $normalized = array_merge($normalized, $options);
-        $normalized['path'] = $this->privateDownloadUrl($path);
+
         return $normalized;
     }
 
