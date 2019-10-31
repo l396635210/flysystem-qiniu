@@ -4,6 +4,7 @@ namespace Liz\Flysystem\QiNiu;
 
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Config;
+use Liz\Flysystem\QiNiu\Plugins\VFrameHelpers\AbstractVFramePolicy;
 use Qiniu\Auth;
 use function Qiniu\base64_urlSafeEncode;
 use Qiniu\Http\Client;
@@ -381,6 +382,20 @@ class QiNiuOssAdapter extends AbstractAdapter
         return $response;
     }
 
+    public function vframe($path, AbstractVFramePolicy $policy){
+        $rules = sprintf('vframe/%s/offset/%d/w/%d/h/%d/rotate/%s',
+            $policy->getFormat(),
+            $policy->getOffset(),
+            $policy->getWidth(),
+            $policy->getHeight(),
+            $policy->getRotate()
+        );
+        $response = $this->getFopManager()->execute($this->bucket, $path, $rules, $policy->getPipeLine(), $policy->getNotifyUrl());
+        $this->ossResponse($response);
+
+        return $response;
+    }
+
     /**
      * @param string $baseUrl         请求url
      * @param bool   $isBucketPrivate bucket是否为私有，如果是私有m3u8文件会对相关ts文件进行授权处理(https://developer.qiniu.com/dora/api/1292/private-m3u8-pm3u8)
@@ -439,7 +454,7 @@ class QiNiuOssAdapter extends AbstractAdapter
         return $this->uploadManager;
     }
 
-    protected function getFopManager()
+    public function getFopManager()
     {
         if (!$this->fopManager) {
             $this->fopManager = new PersistentFop($this->auth);

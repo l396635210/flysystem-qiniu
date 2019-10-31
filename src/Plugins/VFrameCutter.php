@@ -5,13 +5,19 @@ namespace Liz\Flysystem\QiNiu\Plugins;
 
 
 use League\Flysystem\Plugin\AbstractPlugin;
+use Liz\Flysystem\QiNiu\Plugins\VFrameHelpers\AbstractVFramePolicy;
 use Liz\Flysystem\QiNiu\QiNiuOssAdapter;
 
-class AuthGetter extends AbstractPlugin
+class VFrameCutter extends AbstractPlugin
 {
+
     public function getMethod()
     {
-        return 'getAuth';
+        return 'vframe';
+    }
+
+    public function handle($path, AbstractVFramePolicy $policy){
+        $this->getFlySystemAdapter()->vframe($path, $policy);
     }
 
     /**
@@ -22,12 +28,5 @@ class AuthGetter extends AbstractPlugin
         return $this->filesystem->getAdapter();
     }
 
-    /**
-     * @return \Qiniu\Processing\PersistentFop
-     */
-    public function handle()
-    {
-        return $this->getFlySystemAdapter()->getFopManager();
-    }
 
 }

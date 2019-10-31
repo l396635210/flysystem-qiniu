@@ -6,8 +6,9 @@ namespace Liz\Flysystem\QiNiu\Plugins;
 
 use League\Flysystem\Plugin\AbstractPlugin;
 use Liz\Flysystem\QiNiu\QiNiuOssAdapter;
+use Qiniu\Auth;
 
-class AuthGetter extends AbstractPlugin
+class FopManagerGetter extends AbstractPlugin
 {
     public function getMethod()
     {
@@ -23,11 +24,11 @@ class AuthGetter extends AbstractPlugin
     }
 
     /**
-     * @return \Qiniu\Processing\PersistentFop
+     * @return Auth
      */
     public function handle()
     {
-        return $this->getFlySystemAdapter()->getFopManager();
+        return $this->getFlySystemAdapter()->getAuth();
     }
 
 }
