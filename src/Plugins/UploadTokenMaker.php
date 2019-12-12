@@ -75,7 +75,7 @@ class UploadTokenMaker extends AbstractPlugin
         }
         if ($this->uploadPolicy->getTransCoderPolicy()){
             $transCoderPolicy = $this->uploadPolicy->getTransCoderPolicy();
-            $policy['persistentOps'] = $transCoderPolicy->getRules();
+            $policy['persistentOps'] = $transCoderPolicy->getUploadPersistentOps();
             $policy['persistentNotifyUrl'] = $transCoderPolicy->getNotifyUrl();
             $policy['persistentPipeline'] = $transCoderPolicy->getPipeLine();
         }

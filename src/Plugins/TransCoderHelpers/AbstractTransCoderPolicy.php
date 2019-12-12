@@ -57,4 +57,14 @@ abstract class AbstractTransCoderPolicy
      */
     abstract public function getRules();
 
+    /**
+     * @param string $rules
+     */
+    abstract public function setUploadPersistentOps(string $rules);
+
+    /**
+     * @return string
+     */
+    abstract public function getUploadPersistentOps();
+
 }

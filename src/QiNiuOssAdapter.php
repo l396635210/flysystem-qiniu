@@ -374,7 +374,7 @@ class QiNiuOssAdapter extends AbstractAdapter
             $saveAs = $dir.$name.'_trans.'.$ext;
         }
         $toBucket = $toBucket ?: $this->bucket;
-        $fops = "avthumb/$rules|saveas/".base64_urlSafeEncode($toBucket.":$saveAs");
+        $fops = $this->buildTransCodeFop($rules, $toBucket, $saveAs);
 
         $response = $this->getFopManager()->execute($this->bucket, $path, $fops, $pipeline, $notifyUrl);
         $this->ossResponse($response);
@@ -430,6 +430,15 @@ class QiNiuOssAdapter extends AbstractAdapter
         $response = $this->getBucketManager()->bucketInfo($bucket);
         $this->ossResponse($response);
         return $response;
+    }
+
+    protected function buildTransCodeFop($rules, $toBucket, $saveAs){
+        if (0 !== stripos($rules, 'avthumb/')){
+            $rules = 'avthumb/'.$rules;
+        }
+        $fops = "$rules|saveas/".base64_urlSafeEncode($toBucket.":$saveAs");
+
+        return $fops;
     }
 
     /**
