@@ -360,7 +360,7 @@ class QiNiuOssAdapter extends AbstractAdapter
      *
      * @throws QiNiuOssAdapterException
      */
-    public function transCoding($path, $rules, $pipeline = null, $notifyUrl = null, $saveAs = null, $toBucket = null)
+    public function transCoding($path, $rules, $saveAs = null, $notifyUrl = null, $pipeline = null, $toBucket = null)
     {
         $dir = '';
         $filename = $path;

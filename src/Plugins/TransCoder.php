@@ -91,6 +91,6 @@ class TransCoder extends AbstractPlugin
         if ($this->wmImage && !strstr($rules, 'wmImage')) {
             $rules .= '/wmImage/'.base64_urlSafeEncode($this->wmImage);
         }
-        return $this->getFlySystemAdapter()->transCoding($path, $rules, $pipeline, $notifyUrl, $saveAs, $toBucket);
+        return $this->getFlySystemAdapter()->transCoding($path, $rules, $saveAs, $notifyUrl, $pipeline, $toBucket);
     }
 }
