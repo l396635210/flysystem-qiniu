@@ -444,7 +444,7 @@ class QiNiuOssAdapter extends AbstractAdapter
     /**
      * @return BucketManager
      */
-    protected function getBucketManager()
+    public function getBucketManager()
     {
         if (!$this->bucketManager) {
             $this->bucketManager = new BucketManager($this->auth);
