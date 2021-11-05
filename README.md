@@ -1,3 +1,5 @@
+# 由于作原因，没有时间维护。请使用[overtrue/flysystem-qiniu](https://github.com/overtrue/flysystem-qiniu)
+
 ## QiNiu OSS(七牛云对象存储) Adapter For Flysystem.
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
